@@ -8,6 +8,6 @@ may not work when freshly cloned, because they may try to look for a plugin or
 source a file that isn't there.
 
 The directories for suckless programs (dwm, dmenu, etc) are included without
-the patches that I applied to them, but since that patches change the source files,
+the patches that I applied to them, but since the patches change the source files,
 you should be able to compile them without any issues.
 
