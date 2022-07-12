@@ -1,13 +1,16 @@
-A repository for my personal configurations/dotfiles.
+A repository for my personal configuration/dotfiles.
 
-Note that the directories included in this repo are copied from my system
+Note that the dot-dirs included in this repo are copied from my system
 and pruned of all contents that aren't the intended config file
-(for example, my real .emacs.d directory has more than just "init.el" in it,
+(for example, my real .emacs.d directory has more than just init.el in it,
 but this repo includes only init.el). This means that some of my config files
-may not work when freshly cloned, because they may try to look for a plugin or
-source a file that isn't there.
+may not work when freshly cloned, because they may try to source a file at runtime that isn't there.
 
-The directories for suckless programs (dwm, dmenu, etc) are included without
-the patches that I applied to them, but since the patches change the source files,
-you should be able to compile them without any issues.
+The directories for suckless programs (dwm, dmenu, etc.) are included as-is,
+with the diff files for my applied patches (for clarity, not needed for compilation),
+meaning that they should compile and run with no issues. dwm is the only one of these
+for which I've written custom functions into the source code, so for the rest of the suckless
+suite the patches and config.h should tell the whole story.
+
+TODO: add documentation for some specific configs (vim, emacs, dwm) into the readme
 

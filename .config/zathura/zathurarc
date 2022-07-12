@@ -1,0 +1,4 @@
+map [normal] f toggle_fullscreen
+map [fullscreen] f toggle_fullscreen
+map [normal] ; toggle_fullscreen
+map [fullscreen] ; toggle_fullscreen

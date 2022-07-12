@@ -6,8 +6,9 @@ set promptfmt "  \033[34;1m%d\033[0m\033[0m%f\033[0m"
 #set dircounts
 
 set drawbox
-set ratios 2:4
+set ratios 2:3
 
+set preview on
 set previewer ~/.config/lf/preview.sh
 
 cmd subshell ${{
@@ -30,8 +31,8 @@ cmd open ${{
     "$EDITOR" "$f"
 }}
 
-cmd macOs_open ${{
-    open "$f"
+cmd xdg_open ${{
+    xdg-open "$f"
 }}
 
 cmd openwith ${{
@@ -41,7 +42,7 @@ cmd openwith ${{
 
 cmd imageview ${{
     clear
-    viu "$f" && read
+    "$IMAGE_VIEWER" "$f"
 }}
 
 cmd videoview ${{
@@ -49,12 +50,12 @@ cmd videoview ${{
 }}
 
 cmd play ${{
-    pgrep 'afplay' && killall 'afplay'
-    afplay "$f" & disown
+    pgrep 'mpv' && killall 'mpv'
+    mpv "$f" & disown
 }}
 
 cmd stop_play ${{
-    killall 'afplay'
+    killall 'mpv'
 }}
 
 cmd encrypt ${{
@@ -94,7 +95,7 @@ map d delete
 
 map b subshell
 map o push :openwith<space>
-map O macOs_open
+map O xdg_open
 map i imageview
 map M videoview
 map mkf push :mkfile<space>

@@ -12,9 +12,6 @@ set guicursor+=i:ver10-Cursor
 set guicursor+=a:blinkon0
 hi Cursor guifg=bg guibg=DarkGrey
 
-" dir convenience
-set autochdir
-
 " edit gvimrc
 nnoremap <Leader>+ :tabedit<space>~/.gvimrc<cr>
 

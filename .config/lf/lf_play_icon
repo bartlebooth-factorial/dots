@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-pgrep -q 'afplay' && echo 'set promptfmt "  \033[34;1m%d\033[0m\033[0m%f\033[0m  \033[35;1m|>\033[0m"' >> ~/.config/lf/lfrc
-lf
-tail -n 1 ~/.config/lf/lfrc | grep -q 'promptfmt' && sed -i '' -e '$d' ~/.config/lf/lfrc || exit 
-#                                                    -e flag needed on macOs

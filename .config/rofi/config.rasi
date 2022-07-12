@@ -1,0 +1,4 @@
+configuration {
+ font: "mono 18";
+}
+@theme "/usr/share/rofi/themes/Arc-Dark.rasi"
