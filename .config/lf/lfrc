@@ -1,0 +1,125 @@
+set promptfmt "  \033[34;1m%d\033[0m\033[0m%f\033[0m"
+
+#set number
+#set relativenumber
+#set info 'size'
+#set dircounts
+
+set drawbox
+set ratios 2:4
+
+set previewer ~/.config/lf/preview.sh
+
+cmd subshell ${{
+    zsh
+}}
+
+cmd mkfile ${{
+    touch "$*"
+}}
+
+cmd mkdir ${{
+    mkdir -p "$*"
+}}
+
+cmd mkscript ${{
+    mkscript "$*"
+}}
+
+cmd open ${{
+    "$EDITOR" "$f"
+}}
+
+cmd macOs_open ${{
+    open "$f"
+}}
+
+cmd openwith ${{
+    %IFS=' '
+    "$1" "$f"
+}}
+
+cmd imageview ${{
+    clear
+    viu "$f" && read
+}}
+
+cmd videoview ${{
+    mpv "$f"
+}}
+
+cmd play ${{
+    pgrep 'afplay' && killall 'afplay'
+    afplay "$f" & disown
+}}
+
+cmd stop_play ${{
+    killall 'afplay'
+}}
+
+cmd encrypt ${{
+    read -rp 'recipient: ' recip
+    [ "$recip" = 'q' ] && exit
+    read -rp 'output filename: ' name
+    [ "$name" = "" ] && out="$f" || out="$name"
+    gpg -e -s -a -r "$recip" -o "$out.asc" "$f"
+}}
+
+cmd decrypt ${{
+    gpg "$f"
+}}
+
+cmd mail_attach ${{
+    neomutt -e 'set beep=no' -a "$f"
+}}
+
+cmd gd ${{
+    d="$(gd --lf)"
+    cd ~/"$d"
+}}
+
+cmd rc ${{
+    "$EDITOR" ~/.config/lf/lfrc
+}}
+
+map d
+map c
+map m
+map i
+map gh
+
+map <enter> open
+map <backspace2> quit
+map d delete
+
+map b subshell
+map o push :openwith<space>
+map O macOs_open
+map i imageview
+map M videoview
+map mkf push :mkfile<space>
+map mkd push :mkdir<space>
+map mks push :mkscript<space>
+map P :play; set promptfmt "  \033[34;1m%d\033[0m\033[0m%f\033[0m  \033[35;1m|>\033[0m"
+map - :stop_play; set promptfmt "  \033[34;1m%d\033[0m\033[0m%f\033[0m"
+map E encrypt
+map D decrypt
+map a mail_attach
+map \\ cd /
+map H cd ~
+map J :down; down; down
+map K :up; up; up
+map L gd
+map . set hidden!
+map = rc
+
+map ga cd ~/files/audio
+map gc cd ~/.config
+map gf cd ~/files
+map gi cd ~/files/images
+map gm cd ~/files/audio/music
+map gp cd ~/programming
+map gs cd ~/scripts
+map gu cd ~/utils
+
+
