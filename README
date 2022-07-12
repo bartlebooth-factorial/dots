@@ -1,0 +1,13 @@
+A repository for my personal configurations/dotfiles.
+
+Note that the directories included in this repo are copied from my system
+and pruned of all contents that aren't the intended config file
+(for example, my real .emacs.d directory has more than just "init.el" in it,
+but this repo includes only init.el). This means that some of my config files
+may not work when freshly cloned, because they may try to look for a plugin or
+source a file that isn't there.
+
+The directories for suckless programs (dwm, dmenu, etc) are included without
+the patches that I applied to them, but since that patches change the source files,
+you should be able to compile them without any issues.
+
