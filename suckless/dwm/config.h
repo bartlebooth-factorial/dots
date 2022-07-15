@@ -99,11 +99,11 @@ static Keychord *keychords[] = {
 
 	/* Changing window sizes */
 
-	&((Keychord){1, {{MODKEY, XK_h}},           setmfact,      {.f = -0.05} }),
-	&((Keychord){1, {{MODKEY, XK_l}},           setmfact,      {.f = +0.05} }),
-	&((Keychord){1, {{MODKEY, XK_i}},           incnmaster,    {.i = +1 }   }),
-	&((Keychord){1, {{MODKEY|ShiftMask, XK_i}}, incnmaster,    {.i = -1 }   }),
-	&((Keychord){1, {{MODKEY, XK_f}},           togglefullscr, {0}          }),
+	&((Keychord){1, {{MODKEY, XK_h}}, setmfact,      {.f = -0.05} }),
+	&((Keychord){1, {{MODKEY, XK_l}}, setmfact,      {.f = +0.05} }),
+	&((Keychord){1, {{MODKEY, XK_i}}, incnmaster,    {.i = +1 }   }),
+	&((Keychord){1, {{MODKEY, XK_d}}, incnmaster,    {.i = -1 }   }),
+	&((Keychord){1, {{MODKEY, XK_f}}, togglefullscr, {0}          }),
 
 	/* Altering the stack */
 
