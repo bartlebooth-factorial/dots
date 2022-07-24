@@ -82,7 +82,8 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *browsercmd[] = { "qutebrowser", NULL };
 static const char *dmenucmd[]   = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_purple, "-sf", col_gray4, NULL };
-static const char *emacscmd[]   = { "emacs", NULL };
+static const char *emacscmd[]   = { "emacsclient", "-c", NULL };
+static const char *lockcmd[]    = { "slock", NULL };
 static const char *termcmd[]    = { "alacritty", NULL };
 static const char *winselcmd[]  = { "rofi", "-show", "window", NULL };
 
@@ -116,18 +117,20 @@ static Keychord *keychords[] = {
 	&((Keychord){1, {{ MODKEY, XK_b}},                spawn, {.v = browsercmd } }),
 	&((Keychord){1, {{ MODKEY, XK_e}},                spawn, {.v = emacscmd }   }),
 	&((Keychord){1, {{ MODKEY, XK_p}},                spawn, {.v = dmenucmd }   }),
+	&((Keychord){1, {{ MODKEY|ShiftMask, XK_l}},      spawn, {.v = lockcmd }    }),
 	&((Keychord){1, {{ MODKEY|ShiftMask, XK_Return}}, spawn, {.v = termcmd }    }),
 
 	/* Scripts */
 
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_b}}, spawn, SHCMD("chbg")            }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_c}}, spawn, SHCMD("rofiqalc")        }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_l}}, spawn, SHCMD("alacritty -e lf") }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_m}}, spawn, SHCMD("sysmenu")         }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_p}}, spawn, SHCMD("passmenu")        }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_s}}, spawn, SHCMD("flameshot gui")   }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_t}}, spawn, SHCMD("todo")            }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_w}}, spawn, SHCMD("webmenu")         }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_b}},     spawn, SHCMD("chbg")            }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_c}},     spawn, SHCMD("configmenu")      }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_l}},     spawn, SHCMD("alacritty -e lf") }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_m}},     spawn, SHCMD("sysmenu")         }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_p}},     spawn, SHCMD("passmenu")        }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_s}},     spawn, SHCMD("flameshot gui")   }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_t}},     spawn, SHCMD("todo")            }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_w}},     spawn, SHCMD("webmenu")         }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_equal}}, spawn, SHCMD("rofiqalc")        }),
 
 	/* Music player */
 
@@ -141,6 +144,19 @@ static Keychord *keychords[] = {
 	&((Keychord){2, {{MODKEY, XK_m}, {ShiftMask, XK_l}}, spawn, SHCMD("cmus-remote -k +60")                    }),
 	&((Keychord){2, {{MODKEY, XK_m}, {0,         XK_o}}, spawn, SHCMD("cmus-remote -C 'toggle repeat_current") }),
 	&((Keychord){2, {{MODKEY, XK_m}, {0,         XK_i}}, spawn, SHCMD("alacritty -e cmus_info")                }),
+
+	/* Mouse movement */
+
+	&((Keychord){1, {{ MODKEY, XK_Up}},                spawn, SHCMD("xdotool mousemove_relative --sync -- 0 -10")  }),
+	&((Keychord){1, {{ MODKEY, XK_Down}},              spawn, SHCMD("xdotool mousemove_relative --sync -- 0 10")   }),
+	&((Keychord){1, {{ MODKEY, XK_Left}},              spawn, SHCMD("xdotool mousemove_relative --sync -- -10 0")  }),
+	&((Keychord){1, {{ MODKEY, XK_Right}},             spawn, SHCMD("xdotool mousemove_relative --sync -- 10 0")   }),
+	&((Keychord){1, {{ MODKEY|ControlMask, XK_Up}},    spawn, SHCMD("xdotool mousemove_relative --sync -- 0 -100") }),
+	&((Keychord){1, {{ MODKEY|ControlMask, XK_Down}},  spawn, SHCMD("xdotool mousemove_relative --sync -- 0 100")  }),
+	&((Keychord){1, {{ MODKEY|ControlMask, XK_Left}},  spawn, SHCMD("xdotool mousemove_relative --sync -- -100 0") }),
+	&((Keychord){1, {{ MODKEY|ControlMask, XK_Right}}, spawn, SHCMD("xdotool mousemove_relative --sync -- 100 0")  }),
+	&((Keychord){1, {{ MODKEY|ShiftMask, XK_Left}},    spawn, SHCMD("xdotool click 1") }),
+	&((Keychord){1, {{ MODKEY|ShiftMask, XK_Right}},   spawn, SHCMD("xdotool click 3") }),
 
 	/* Closing programs */
 
