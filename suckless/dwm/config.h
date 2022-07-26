@@ -122,15 +122,16 @@ static Keychord *keychords[] = {
 
 	/* Scripts */
 
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_b}},     spawn, SHCMD("chbg")            }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_c}},     spawn, SHCMD("configmenu")      }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_l}},     spawn, SHCMD("alacritty -e lf") }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_m}},     spawn, SHCMD("sysmenu")         }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_p}},     spawn, SHCMD("passmenu")        }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_s}},     spawn, SHCMD("flameshot gui")   }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_t}},     spawn, SHCMD("todo")            }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_w}},     spawn, SHCMD("webmenu")         }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_equal}}, spawn, SHCMD("rofiqalc")        }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_b}},     spawn, SHCMD("chbg")                          }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_c}},     spawn, SHCMD("configmenu")                    }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_e}},     spawn, SHCMD("qutebrowser https://gmail.com") }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_l}},     spawn, SHCMD("alacritty -e lf")               }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_m}},     spawn, SHCMD("sysmenu")                       }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_p}},     spawn, SHCMD("passmenu")                      }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_s}},     spawn, SHCMD("flameshot gui")                 }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_t}},     spawn, SHCMD("todo")                          }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_w}},     spawn, SHCMD("webmenu")                       }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_equal}}, spawn, SHCMD("rofiqalc")                      }),
 
 	/* Music player */
 
