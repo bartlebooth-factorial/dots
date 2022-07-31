@@ -3,10 +3,10 @@
 /* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
-static const unsigned int gappih    = 10;       /* horiz inner gap between windows */
-static const unsigned int gappiv    = 10;       /* vert inner gap between windows */
-static const unsigned int gappoh    = 10;       /* horiz outer gap between windows and screen edge */
-static const unsigned int gappov    = 10;       /* vert outer gap between windows and screen edge */
+static const unsigned int gappih    = 16;       /* horiz inner gap between windows */
+static const unsigned int gappiv    = 16;       /* vert inner gap between windows */
+static const unsigned int gappoh    = 16;       /* horiz outer gap between windows and screen edge */
+static const unsigned int gappov    = 16;       /* vert outer gap between windows and screen edge */
 static const int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static int showbar                  = 1;        /* 0 means no bar */
@@ -14,21 +14,18 @@ static int topbar                   = 1;        /* 0 means bottom bar */
 static const double activeopacity   = 1.0f;     /* Window opacity when it's focused (0 <= opacity <= 1) */
 static const double inactiveopacity = 0.875f;   /* Window opacity when it's inactive (0 <= opacity <= 1) */
 static Bool bUseOpacity             = False;    /* Starts with opacity on any unfocused windows */
-static const char *fonts[]          = { "monospace:size=14" };
+static const char *fonts[]          = { "monospace:size=16" };
 static const char dmenufont[]       = "monospace:size=20";
-static const char col_gray1[]       = "#222222";
+static const char col_gray0[]       = "#111111";
+static const char col_gray1[]       = "#10100e";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#005577";
-static const char col_blue[]        = "#0040ff";
 static const char col_purple[]      = "#4d0099";
-static const char col_red[]         = "#660000";
-static const char col_darkgrey[]	= "#111111";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
-	[SchemeNorm] = { col_gray3, col_gray1, col_darkgrey },
-	[SchemeSel]  = { col_gray4, col_gray1, col_gray2    },
+	[SchemeNorm] = { col_gray3, col_gray1, col_gray0 },
+	[SchemeSel]  = { col_gray4, col_gray1, col_gray2 },
 };
 
 /* tagging */
@@ -41,14 +38,16 @@ static const Rule rules[] = {
 	 */
 	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
 	{ "Alacritty",  NULL,     NULL,           0,         0,          1,           0,        -1 },
+	{ "kitty",      NULL,     NULL,           0,         0,          1,           0,        -1 },
 	{ NULL,			NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
 };
 
 /* layout(s) */
-static const float mfact     = 0.50; /* factor of master area size [0.05..0.95] */
-static const int nmaster     = 1;    /* number of clients in master area */
-static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
-static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
+static const float mfact        = 0.50; /* factor of master area size [0.05..0.95] */
+static const int nmaster        = 1;    /* number of clients in master area */
+static const int resizehints    = 0;    /* 1 means respect size hints in tiled resizals */
+static const int lockfullscreen = 0;    /* 1 will force focus on the fullscreen window */
+static       int attachbelow    = 0;    /* 1 means attach after the currently active window */
 
 #include "vanitygaps.c"
 #include "tatami.c"
@@ -66,6 +65,7 @@ static const Layout layouts[] = {
 	{ "H[]",      deck },                   // u
 	{ "|+|",      tatami },                 // i
 	{ "><>",      NULL },                   // o
+	{ NULL,       NULL },
 };
 
 #define MODKEY Mod1Mask
@@ -100,11 +100,11 @@ static Keychord *keychords[] = {
 
 	/* Changing window sizes */
 
-	&((Keychord){1, {{MODKEY, XK_h}}, setmfact,      {.f = -0.05} }),
-	&((Keychord){1, {{MODKEY, XK_l}}, setmfact,      {.f = +0.05} }),
-	&((Keychord){1, {{MODKEY, XK_i}}, incnmaster,    {.i = +1 }   }),
-	&((Keychord){1, {{MODKEY, XK_d}}, incnmaster,    {.i = -1 }   }),
-	&((Keychord){1, {{MODKEY, XK_f}}, togglefullscr, {0}          }),
+	&((Keychord){1, {{MODKEY, XK_h}},      setmfact,      {.f = -0.05} }),
+	&((Keychord){1, {{MODKEY, XK_l}},      setmfact,      {.f = +0.05} }),
+	&((Keychord){1, {{MODKEY, XK_comma}},  incnmaster,    {.i = +1 }   }),
+	&((Keychord){1, {{MODKEY, XK_period}}, incnmaster,    {.i = -1 }   }),
+	&((Keychord){1, {{MODKEY, XK_f}},      togglefullscr, {0}          }),
 
 	/* Altering the stack */
 
@@ -166,38 +166,46 @@ static Keychord *keychords[] = {
 
 	/* Layouts */
 
-	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_h}}, setlayout, {.v = &layouts[0]}  }), // tile
-	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_j}}, setlayout, {.v = &layouts[1]}  }), // monocle
-	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_k}}, setlayout, {.v = &layouts[2]}  }), // vtile
-	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_l}}, setlayout, {.v = &layouts[3]}  }), // dwindle
-	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_g}}, setlayout, {.v = &layouts[4]}  }), // grid
-	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_n}}, setlayout, {.v = &layouts[5]}  }), // centeredmaster
-	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_m}}, setlayout, {.v = &layouts[6]}  }), // centeredfloatingmaster
-	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_y}}, setlayout, {.v = &layouts[7]}  }), // spiral
-	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_u}}, setlayout, {.v = &layouts[8]}  }), // deck
-	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_i}}, setlayout, {.v = &layouts[9]}  }), // tatami
-	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_o}}, setlayout, {.v = &layouts[10]} }), // floating
+	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_h}}, setlayout,   {.v = &layouts[0]}  }), // tile
+	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_j}}, setlayout,   {.v = &layouts[1]}  }), // monocle
+	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_k}}, setlayout,   {.v = &layouts[2]}  }), // vtile
+	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_l}}, setlayout,   {.v = &layouts[3]}  }), // dwindle
+	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_g}}, setlayout,   {.v = &layouts[4]}  }), // grid
+	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_n}}, setlayout,   {.v = &layouts[5]}  }), // centeredmaster
+	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_m}}, setlayout,   {.v = &layouts[6]}  }), // centeredfloatingmaster
+	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_y}}, setlayout,   {.v = &layouts[7]}  }), // spiral
+	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_u}}, setlayout,   {.v = &layouts[8]}  }), // deck
+	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_i}}, setlayout,   {.v = &layouts[9]}  }), // tatami
+	&((Keychord){2, {{MODKEY, XK_z}, {0, XK_o}}, setlayout,   {.v = &layouts[10]} }), // floating
+	&((Keychord){1, {{MODKEY, XK_bracketleft}},  cyclelayout, {.i = -1 }          }), // [prev layout]
+	&((Keychord){1, {{MODKEY, XK_bracketright}}, cyclelayout, {.i = +1 }          }), // [next layout]
 
 	/* Options */
 
-	&((Keychord){2, {{MODKEY, XK_t}, {0, XK_b}}, togglebar,      {0} }),
-	&((Keychord){2, {{MODKEY, XK_t}, {0, XK_f}}, togglefloating, {0} }),
-	&((Keychord){2, {{MODKEY, XK_t}, {0, XK_g}}, togglegaps,     {0} }),
-	&((Keychord){2, {{MODKEY, XK_t}, {0, XK_o}}, toggleopacity,  {0} }),
+	&((Keychord){2, {{MODKEY, XK_t}, {0, XK_a}}, toggleAttachBelow, {0} }),
+	&((Keychord){2, {{MODKEY, XK_t}, {0, XK_b}}, togglebar,         {0} }),
+	&((Keychord){2, {{MODKEY, XK_t}, {0, XK_f}}, togglefloating,    {0} }),
+	&((Keychord){2, {{MODKEY, XK_t}, {0, XK_g}}, togglegaps,        {0} }),
+	&((Keychord){2, {{MODKEY, XK_t}, {0, XK_o}}, toggleopacity,     {0} }),
+	&((Keychord){2, {{MODKEY, XK_t}, {0, XK_t}}, toggletopbar,      {0} }),
 
 	/* Tags */
 
-	TAGKEYS(                                    XK_1,             0)
-	TAGKEYS(                                    XK_2,             1)
-	TAGKEYS(                                    XK_3,             2)
-	TAGKEYS(                                    XK_4,             3)
-	TAGKEYS(                                    XK_5,             4)
-	TAGKEYS(                                    XK_6,             5)
-	TAGKEYS(                                    XK_7,             6)
-	TAGKEYS(                                    XK_8,             7)
-	TAGKEYS(                                    XK_9,             8)
-	&((Keychord){1, {{MODKEY, XK_Tab}},         view,         {0} }),
-	&((Keychord){1, {{MODKEY|ShiftMask, XK_0}}, view, {.ui = ~0 } }),
+	TAGKEYS(                                          XK_1,                  0)
+	TAGKEYS(                                          XK_2,                  1)
+	TAGKEYS(                                          XK_3,                  2)
+	TAGKEYS(                                          XK_4,                  3)
+	TAGKEYS(                                          XK_5,                  4)
+	TAGKEYS(                                          XK_6,                  5)
+	TAGKEYS(                                          XK_7,                  6)
+	TAGKEYS(                                          XK_8,                  7)
+	TAGKEYS(                                          XK_9,                  8)
+	&((Keychord){1, {{MODKEY,           XK_Tab}},     view,              {0} }),
+	&((Keychord){1, {{MODKEY|ShiftMask, XK_0}},       view,      {.ui = ~0 } }),
+	&((Keychord){1, {{MODKEY,           XK_minus}},   viewprev,          {0} }),
+	&((Keychord){1, {{MODKEY,           XK_equal}},   viewnext,          {0} }),
+	&((Keychord){1, {{MODKEY|ShiftMask, XK_minus}},   tagtoprev,         {0} }),
+	&((Keychord){1, {{MODKEY|ShiftMask, XK_equal}},   tagtonext,         {0} }),
 
 	/* Moniters */
 

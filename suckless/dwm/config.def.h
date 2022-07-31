@@ -47,6 +47,7 @@ static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] 
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
+static const int attachbelow = 1;    /* 1 means attach after the currently active window */
 
 #include "fibonacci.c"
 static const Layout layouts[] = {
@@ -134,6 +135,10 @@ static Keychord *keychords[] = {
 	&((Keychord){1, {{ MODKEY,                       XK_period}}, focusmon,       {.i = +1 } }),
 	&((Keychord){1, {{ MODKEY|ShiftMask,             XK_comma}},  tagmon,         {.i = -1 } }),
 	&((Keychord){1, {{ MODKEY|ShiftMask,             XK_period}}, tagmon,         {.i = +1 } }),
+	&((Keychord){1, {{ MODKEY,                       XK_minus}},  viewnext,  {0} }),
+	&((Keychord){1, {{ MODKEY,                       XK_equal}},  viewprev,  {0} }),
+	&((Keychord){1, {{ MODKEY|ShiftMask,             XK_minus}},  togtonext, {0} }),
+	&((Keychord){1, {{ MODKEY|ShiftMask,             XK_equal}},  tagtoprev, {0} }),
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
