@@ -1,18 +1,18 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const unsigned int borderpx  = 1;        /* border pixel of windows */
+static const unsigned int borderpx  = 3;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
-static const unsigned int gappih    = 16;       /* horiz inner gap between windows */
-static const unsigned int gappiv    = 16;       /* vert inner gap between windows */
-static const unsigned int gappoh    = 16;       /* horiz outer gap between windows and screen edge */
-static const unsigned int gappov    = 16;       /* vert outer gap between windows and screen edge */
+static const unsigned int gappih    = 10;       /* horiz inner gap between windows */
+static const unsigned int gappiv    = 10;       /* vert inner gap between windows */
+static const unsigned int gappoh    = 10;       /* horiz outer gap between windows and screen edge */
+static const unsigned int gappov    = 10;       /* vert outer gap between windows and screen edge */
 static const int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static int showbar                  = 1;        /* 0 means no bar */
 static int topbar                   = 1;        /* 0 means bottom bar */
 static const double activeopacity   = 1.0f;     /* Window opacity when it's focused (0 <= opacity <= 1) */
-static const double inactiveopacity = 0.875f;   /* Window opacity when it's inactive (0 <= opacity <= 1) */
+static const double inactiveopacity = 0.60f;    /* Window opacity when it's inactive (0 <= opacity <= 1) */
 static Bool bUseOpacity             = False;    /* Starts with opacity on any unfocused windows */
 static const char *fonts[]          = { "monospace:size=16" };
 static const char dmenufont[]       = "monospace:size=20";
@@ -21,11 +21,12 @@ static const char col_gray1[]       = "#10100e";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
+static const char col_white[]       = "#ffffff";
 static const char col_purple[]      = "#4d0099";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray0 },
-	[SchemeSel]  = { col_gray4, col_gray1, col_gray2 },
+	[SchemeSel]  = { col_gray4, col_gray1, col_purple },
 };
 
 /* tagging */
@@ -39,14 +40,14 @@ static const Rule rules[] = {
 	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
 	{ "Alacritty",  NULL,     NULL,           0,         0,          1,           0,        -1 },
 	{ "kitty",      NULL,     NULL,           0,         0,          1,           0,        -1 },
-	{ NULL,			NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
+	{ NULL,		NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
 };
 
 /* layout(s) */
 static const float mfact        = 0.50; /* factor of master area size [0.05..0.95] */
 static const int nmaster        = 1;    /* number of clients in master area */
 static const int resizehints    = 0;    /* 1 means respect size hints in tiled resizals */
-static const int lockfullscreen = 0;    /* 1 will force focus on the fullscreen window */
+static const int lockfullscreen = 1;    /* 1 will force focus on the fullscreen window */
 static       int attachbelow    = 0;    /* 1 means attach after the currently active window */
 
 #include "vanitygaps.c"
@@ -69,23 +70,24 @@ static const Layout layouts[] = {
 };
 
 #define MODKEY Mod1Mask
-#define TAGKEYS(KEY,TAG)												\
-	&((Keychord){1, {{MODKEY, KEY}},								view,           {.ui = 1 << TAG} }), \
-		&((Keychord){1, {{MODKEY|ControlMask, KEY}},					toggleview,     {.ui = 1 << TAG} }), \
-		&((Keychord){1, {{MODKEY|ShiftMask, KEY}},						tag,            {.ui = 1 << TAG} }), \
-		&((Keychord){1, {{MODKEY|ControlMask|ShiftMask, KEY}},			toggletag,      {.ui = 1 << TAG} }),
+#define TAGKEYS(KEY,TAG) \
+	&((Keychord){1, {{MODKEY, KEY}}, view, {.ui = 1 << TAG} }), \
+		&((Keychord){1, {{MODKEY|ControlMask, KEY}}, toggleview, {.ui = 1 << TAG} }), \
+		&((Keychord){1, {{MODKEY|ShiftMask, KEY}}, tag, {.ui = 1 << TAG} }), \
+		&((Keychord){1, {{MODKEY|ControlMask|ShiftMask, KEY}}, toggletag, {.ui = 1 << TAG} }),
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *browsercmd[] = { "qutebrowser", NULL };
+static const char *browsercmd[] = { "firefox", NULL };
 static const char *dmenucmd[]   = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_purple, "-sf", col_gray4, NULL };
 static const char *emacscmd[]   = { "emacsclient", "-c", NULL };
 static const char *lockcmd[]    = { "slock", NULL };
-static const char *termcmd[]    = { "alacritty", NULL };
-static const char *winselcmd[]  = { "rofi", "-show", "window", NULL };
+static const char *suscmd[]    =  { "susblurlock", NULL };
+static const char *termcmd[]    = { "kitty", NULL };
+static const char *winselcmd[]  = { "rofi", "-show", "window", "-matching", "fuzzy", NULL };
 
 #include "selfrestart.c"
 
@@ -114,11 +116,13 @@ static Keychord *keychords[] = {
 
 	/* Spawning programs */
 
-	&((Keychord){1, {{ MODKEY, XK_b}},                spawn, {.v = browsercmd } }),
-	&((Keychord){1, {{ MODKEY, XK_e}},                spawn, {.v = emacscmd }   }),
-	&((Keychord){1, {{ MODKEY, XK_p}},                spawn, {.v = dmenucmd }   }),
-	&((Keychord){1, {{ MODKEY|ShiftMask, XK_l}},      spawn, {.v = lockcmd }    }),
-	&((Keychord){1, {{ MODKEY|ShiftMask, XK_Return}}, spawn, {.v = termcmd }    }),
+	&((Keychord){1, {{ MODKEY, XK_o}},                   spawn, SHCMD("openmenu")  }),
+	&((Keychord){1, {{ MODKEY, XK_b}},                   spawn, {.v = browsercmd } }),
+	&((Keychord){1, {{ MODKEY, XK_e}},                   spawn, {.v = emacscmd }   }),
+	&((Keychord){1, {{ MODKEY, XK_p}},                   spawn, {.v = dmenucmd }   }),
+	&((Keychord){1, {{ MODKEY|ShiftMask, XK_l}},         spawn, {.v = lockcmd }    }),
+	&((Keychord){1, {{ MODKEY|ShiftMask, XK_semicolon}}, spawn, {.v = suscmd }     }),
+	&((Keychord){1, {{ MODKEY|ShiftMask, XK_Return}},    spawn, {.v = termcmd }    }),
 
 	/* Scripts */
 
@@ -129,9 +133,16 @@ static Keychord *keychords[] = {
 	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_m}},     spawn, SHCMD("sysmenu")                       }),
 	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_p}},     spawn, SHCMD("passmenu")                      }),
 	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_s}},     spawn, SHCMD("flameshot gui")                 }),
-	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_t}},     spawn, SHCMD("todo")                          }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_t}},     spawn, SHCMD("emacsclient -c ~/.todo.org")    }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_u}},     spawn, SHCMD("alacritty -e sysup")            }),
+	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_v}},     spawn, SHCMD("alacritty -e viber")            }),	
 	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_w}},     spawn, SHCMD("webmenu")                       }),
 	&((Keychord){2, {{MODKEY, XK_s}, {0, XK_equal}}, spawn, SHCMD("rofiqalc")                      }),
+
+	/* School */
+
+	&((Keychord){1, {{MODKEY, XK_c}}, spawn, SHCMD("firefox --new-window https://canvas.umn.edu") }),
+	&((Keychord){1, {{MODKEY, XK_g}}, spawn, SHCMD("firefox --new-window https://gmail.com") }),
 
 	/* Music player */
 
@@ -143,8 +154,19 @@ static Keychord *keychords[] = {
 	&((Keychord){2, {{MODKEY, XK_m}, {0,         XK_l}}, spawn, SHCMD("cmus-remote -k +10")                    }),
 	&((Keychord){2, {{MODKEY, XK_m}, {ShiftMask, XK_h}}, spawn, SHCMD("cmus-remote -k -60")                    }),
 	&((Keychord){2, {{MODKEY, XK_m}, {ShiftMask, XK_l}}, spawn, SHCMD("cmus-remote -k +60")                    }),
-	&((Keychord){2, {{MODKEY, XK_m}, {0,         XK_o}}, spawn, SHCMD("cmus-remote -C 'toggle repeat_current") }),
+	&((Keychord){2, {{MODKEY, XK_m}, {0,         XK_o}}, spawn, SHCMD("cmus-remote -C 'toggle repeat_current'") }),
 	&((Keychord){2, {{MODKEY, XK_m}, {0,         XK_i}}, spawn, SHCMD("alacritty -e cmus_info")                }),
+	/* &((Keychord){2, {{MODKEY, XK_m}, {0,         XK_m}}, spawn, SHCMD("alacritty -e mocp")      }), */
+	/* &((Keychord){2, {{MODKEY, XK_m}, {0,         XK_p}}, spawn, SHCMD("mocp -G")                }), */
+	/* &((Keychord){2, {{MODKEY, XK_m}, {0,         XK_j}}, spawn, SHCMD("mocp -f")                }), */
+	/* &((Keychord){2, {{MODKEY, XK_m}, {0,         XK_k}}, spawn, SHCMD("mocp -r")                }), */
+	/* &((Keychord){2, {{MODKEY, XK_m}, {0,         XK_h}}, spawn, SHCMD("mocp -k -10")            }), */
+	/* &((Keychord){2, {{MODKEY, XK_m}, {0,         XK_l}}, spawn, SHCMD("mocp -k +10")            }), */
+	/* &((Keychord){2, {{MODKEY, XK_m}, {ShiftMask, XK_h}}, spawn, SHCMD("mocp -k -60")            }), */
+	/* &((Keychord){2, {{MODKEY, XK_m}, {ShiftMask, XK_l}}, spawn, SHCMD("mocp -k +60")            }), */
+	/* &((Keychord){2, {{MODKEY, XK_m}, {0,         XK_o}}, spawn, SHCMD("mocp -t repeat")         }), */
+	/* &((Keychord){2, {{MODKEY, XK_m}, {0,         XK_s}}, spawn, SHCMD("mocp -t shuffle")        }), */
+	/* &((Keychord){2, {{MODKEY, XK_m}, {0,         XK_i}}, spawn, SHCMD("alacritty -e mocp_info") }), */
 
 	/* Mouse movement */
 
